@@ -1,0 +1,24 @@
+# Binaries
+bin/
+*.exe
+*.dll
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Go
+go.sum
+go.work
+
+# Output files
+*_cleaned.mp4
+*_cut.mp4
+*.log
+
+# Temp
+tmp/
