@@ -78,7 +78,14 @@ go run main.go -i input.mp4 -mp3
 
 ```
 ├── bin/            # Local FFmpeg binaries (ignored by git)
-├── main.go         # Source code
+├── main.go         # Main entry point
+├── mp3.go          # MP3 extraction logic
+├── youtube.go      # YouTube download logic
+├── go.mod          # Go module definition
+├── go.sum          # Go module checksums
+├── setup_ffmpeg.ps1 # Setup script for FFmpeg
+├── extract_only.ps1 # Helper script
 ├── .gitignore      # Git configuration
+├── LICENSE         # License file
 └── README.md       # Documentation
 ```
