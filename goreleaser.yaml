@@ -36,7 +36,7 @@ changelog:
       - '^test:'
 
 scoops:
-  - bucket:
+  - repository:
       owner: sok97
       name: scoop-bucket
     commit_author:
