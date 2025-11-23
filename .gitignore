@@ -22,3 +22,7 @@ go.work
 
 # Temp
 tmp/
+
+# Media
+*.mp4
+*.mp3

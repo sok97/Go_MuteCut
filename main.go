@@ -29,6 +29,7 @@ type Config struct {
 	FfmpegBin  string
 	FfprobeBin string
 	Verbose    bool
+	ExtractMP3 bool
 }
 
 type Segment struct {
@@ -50,30 +51,73 @@ func main() {
 	presetPtr := flag.String("preset", "medium", "Encoding preset")
 	crfPtr := flag.Int("crf", 23, "CRF Quality")
 	verbosePtr := flag.Bool("v", false, "Verbose output")
+	mp3Ptr := flag.Bool("mp3", false, "Extract MP3 audio")
+	urlPtr := flag.String("url", "", "YouTube Video URL")
 
 	flag.Parse()
 
 	// Check if any flags were provided (excluding default values where possible to detect)
 	// A simple way is to check if input is empty, as it's required for non-interactive mode.
-	if *inputPtr == "" {
+	if *inputPtr == "" && *urlPtr == "" {
 		// Try interactive mode
 		fmt.Println("No input file provided via flags. Entering Interactive Mode...")
 		interactiveConfig := interactiveMode()
 
 		// Merge interactive config into the main logic
 		// We'll just overwrite the pointers or variables used later
-		*inputPtr = interactiveConfig.InputFile
+		if interactiveConfig.InputFile != "" {
+			*inputPtr = interactiveConfig.InputFile
+		}
+		// If interactive mode returned a URL (we'll handle this by checking if InputFile is a URL or adding a field)
+		// Actually, let's just use InputFile for both and detect if it's a URL.
+
 		*outputPtr = interactiveConfig.OutputFile // might be empty, auto-gen logic handles it
 		*startPtr = interactiveConfig.StartTime
 		*endPtr = interactiveConfig.EndTime
 
 		*muteStartPtr = interactiveConfig.MuteStart
 		*muteEndPtr = interactiveConfig.MuteEnd
+		*mp3Ptr = interactiveConfig.ExtractMP3
 		// We keep defaults for others or could ask for them too, but let's stick to the requested ones
 	}
 
-	if *inputPtr == "" {
-		fmt.Println("Error: Input file required.")
+	if *inputPtr == "" && *urlPtr == "" {
+		fmt.Println("Error: Input file or YouTube URL required.")
+		os.Exit(1)
+	}
+
+	// Handle YouTube Download
+	if *urlPtr != "" {
+		fmt.Println("YouTube URL provided. Downloading...")
+		downloadedFile, err := downloadYoutubeVideo(*urlPtr)
+		if err != nil {
+			fmt.Printf("Error downloading YouTube video: %v\n", err)
+			os.Exit(1)
+		}
+		*inputPtr = downloadedFile
+	} else if strings.HasPrefix(*inputPtr, "http://") || strings.HasPrefix(*inputPtr, "https://") || strings.HasPrefix(*inputPtr, "www.") {
+		// Detect URL from interactive input
+		fmt.Println("YouTube URL detected. Downloading...")
+		downloadedFile, err := downloadYoutubeVideo(*inputPtr)
+		if err != nil {
+			fmt.Printf("Error downloading YouTube video: %v\n", err)
+			os.Exit(1)
+		}
+		*inputPtr = downloadedFile
+	}
+
+	// Validate Input File
+	info, err := os.Stat(*inputPtr)
+	if os.IsNotExist(err) {
+		fmt.Printf("Error: Input file '%s' does not exist.\n", *inputPtr)
+		os.Exit(1)
+	}
+	if err != nil {
+		fmt.Printf("Error: Cannot access input file: %v\n", err)
+		os.Exit(1)
+	}
+	if info.IsDir() {
+		fmt.Printf("Error: Input '%s' is a directory. Please specify a video file.\n", *inputPtr)
 		os.Exit(1)
 	}
 
@@ -99,6 +143,7 @@ func main() {
 		Preset:     *presetPtr,
 		CRF:        *crfPtr,
 		Verbose:    *verbosePtr,
+		ExtractMP3: *mp3Ptr,
 	}
 
 	cfg.FfmpegBin = resolveBinary("ffmpeg")
@@ -115,7 +160,11 @@ func main() {
 	start := time.Now()
 
 	fmt.Println("Mode: Processing (Cut/Mute)...")
-	simpleCut(cfg)
+	if cfg.ExtractMP3 {
+		extractAudio(cfg)
+	} else {
+		simpleCut(cfg)
+	}
 	printStats(cfg, time.Since(start))
 }
 
@@ -228,7 +277,7 @@ func interactiveMode() Config {
 	cfg := Config{}
 
 	// 1. Input File
-	fmt.Print("Enter input video file path: ")
+	fmt.Print("Enter input video file path or YouTube URL: ")
 	if scanner.Scan() {
 		cfg.InputFile = strings.TrimSpace(scanner.Text())
 	}
@@ -237,7 +286,8 @@ func interactiveMode() Config {
 	fmt.Println("Select Mode:")
 	fmt.Println("1. Cut (Trim video)")
 	fmt.Println("2. Mute (Mute a section)")
-	fmt.Print("Enter choice (1 or 2): ")
+	fmt.Println("3. Extract MP3")
+	fmt.Print("Enter choice (1, 2, or 3): ")
 	var mode string
 	if scanner.Scan() {
 		mode = strings.TrimSpace(scanner.Text())
@@ -263,6 +313,9 @@ func interactiveMode() Config {
 		if scanner.Scan() {
 			cfg.MuteEnd = strings.TrimSpace(scanner.Text())
 		}
+	} else if mode == "3" {
+		fmt.Println("--- MP3 Extraction Mode ---")
+		cfg.ExtractMP3 = true
 	} else {
 		fmt.Println("Invalid mode selected. Exiting.")
 	}
