@@ -15,7 +15,9 @@ A lightweight, high-performance video cutter and muter written in Go. It uses FF
 
 1.  Clone the repository.
 2.  Ensure you have Go installed.
-3.  Run the setup script (if provided) or manually place `ffmpeg.exe` and `ffprobe.exe` in the `bin/` folder.
+3.  **Windows**: Run `setup_ffmpeg.ps1` to download FFmpeg automatically.
+    **Linux/macOS**: Run `chmod +x setup_ffmpeg.sh && ./setup_ffmpeg.sh` or install FFmpeg via your package manager (e.g., `apt install ffmpeg`, `brew install ffmpeg`).
+4.  Alternatively, manually place `ffmpeg` and `ffprobe` binaries in the `bin/` folder.
 
 ## Usage
 
@@ -72,7 +74,7 @@ go run main.go -i input.mp4 -mp3
 *   **Re-encoding**: The tool always re-encodes the video (using H.264/AAC). It does not perform "lossless" stream copying, so quality generation loss is possible, and it is slower than a simple cut.
 *   **Tracks**: Only processes the primary video and audio track. Subtitles, chapters, and additional audio tracks (e.g., commentary) will be lost.
 *   **Codecs**: Hardcoded to use `libx264` and `aac`.
-*   **Platform**: The setup script and binary logic are currently optimized for Windows.
+*   **Platform**: Works on Windows, Linux, and macOS. The setup scripts are provided for Windows (`.ps1`) and Linux (`.sh`).
 
 ## Project Structure
 
@@ -83,7 +85,8 @@ go run main.go -i input.mp4 -mp3
 ├── youtube.go      # YouTube download logic
 ├── go.mod          # Go module definition
 ├── go.sum          # Go module checksums
-├── setup_ffmpeg.ps1 # Setup script for FFmpeg
+├── setup_ffmpeg.ps1 # Setup script for FFmpeg (Windows)
+├── setup_ffmpeg.sh  # Setup script for FFmpeg (Linux/macOS)
 ├── extract_only.ps1 # Helper script
 ├── .gitignore      # Git configuration
 ├── LICENSE         # License file
