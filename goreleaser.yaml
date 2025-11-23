@@ -36,16 +36,16 @@ changelog:
       - '^test:'
 
 scoops:
-  url_template: "https://github.com/sok97/Go_Vchopper/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-  bucket:
-    owner: sok97
-    name: scoop-bucket
-  commit_author:
-    name: goreleaserbot
-    email: bot@goreleaser.com
-  homepage: "https://github.com/sok97/Go_Vchopper"
-  description: "A lightweight video cutter and muter."
-  license: MIT
+  - url_template: "https://github.com/sok97/Go_Vchopper/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    bucket:
+      owner: sok97
+      name: scoop-bucket
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+    homepage: "https://github.com/sok97/Go_Vchopper"
+    description: "A lightweight video cutter and muter."
+    license: MIT
 
 chocolateys:
   - name: vchopper
@@ -68,7 +68,7 @@ chocolateys:
     api_key: "{{ .Env.CHOCOLATEY_API_KEY }}"
     source_repo: "https://push.chocolatey.org/"
 
-wingets:
+winget:
   - name: vchopper
     publisher: sok97
     license: MIT
