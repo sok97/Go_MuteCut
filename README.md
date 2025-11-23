@@ -4,7 +4,9 @@ A lightweight, high-performance video cutter and muter written in Go. It uses FF
 
 ## Features
 
-*   **Interactive Mode**: Easy-to-use prompts for cutting and muting without complex flags.
+*   **Interactive Mode**: Easy-to-use prompts for cutting, muting, downloading, and extracting audio.
+*   **YouTube Download**: Download videos directly from YouTube URLs.
+*   **MP3 Extraction**: Extract audio from videos as MP3 files.
 *   **Precise Cutting**: Cut video segments with `-start` and `-end` flags.
 *   **Local FFmpeg**: Uses a local `bin/` folder for FFmpeg, keeping your system clean.
 *   **Fast Processing**: Optimized filter graphs for single-pass processing.
@@ -24,7 +26,7 @@ Run without arguments to enter interactive mode:
 ```bash
 go run main.go
 ```
-Follow the on-screen prompts to select input file, mode (Cut/Mute), and time ranges.
+Follow the on-screen prompts to select input file (or URL), mode (Cut/Mute/MP3), and time ranges.
 
 ### Cut Only
 Trim a video from 00:01:30 to 00:02:00:
@@ -38,6 +40,18 @@ Mute audio from 00:06:00 to 00:06:30:
 go run main.go -i input.mp4 -mute-start 00:06:00 -mute-end 00:06:30
 ```
 
+### YouTube Download
+Download a video from YouTube:
+```bash
+go run main.go -url "https://www.youtube.com/watch?v=..."
+```
+
+### MP3 Extraction
+Extract audio from a video file:
+```bash
+go run main.go -i input.mp4 -mp3
+```
+
 ### Options
 
 | Flag | Description | Default |
@@ -48,6 +62,8 @@ go run main.go -i input.mp4 -mute-start 00:06:00 -mute-end 00:06:30
 | `-end` | End time (e.g., `20`, `00:02:00`) | |
 | `-mute-start`| Start time to mute | |
 | `-mute-end`| End time to mute | |
+| `-mp3` | Extract audio as MP3 | `false` |
+| `-url` | YouTube Video URL | |
 | `-crf` | Quality (lower is better) | `23` |
 | `-preset` | Encoding speed | `medium` |
 
