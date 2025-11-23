@@ -12,7 +12,6 @@ Thumbs.db
 .idea/
 
 # Go
-go.sum
 go.work
 
 # Output files
