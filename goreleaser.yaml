@@ -10,17 +10,43 @@ builds:
       - CGO_ENABLED=0
     goos:
       - windows
+      - darwin
     goarch:
       - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
     binary: vchopper
 
 archives:
-  - format: zip
+  - format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
     files:
       - README.md
       - LICENSE
       - setup_ffmpeg.ps1
+      - setup_ffmpeg.sh
+
+brews:
+  - repository:
+      owner: sok97
+      name: homebrew-tap
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+    homepage: "https://github.com/sok97/Go_Vchopper"
+    description: "A lightweight video cutter and muter"
+    license: MIT
+    install: |
+      bin.install "vchopper"
+    test: |
+      system "#{bin}/vchopper", "-h"
+    dependencies:
+      - name: ffmpeg
 
 checksum:
   name_template: 'checksums.txt'
@@ -45,22 +71,3 @@ scoops:
     homepage: "https://github.com/sok97/Go_Vchopper"
     description: "A lightweight video cutter and muter"
     license: MIT
-
-
-winget:
-  - name: vchopper
-    publisher: sok97
-    license: MIT
-    license_url: "https://github.com/sok97/Go_Vchopper/blob/main/LICENSE"
-    copyright: "2025 sok97"
-    homepage: "https://github.com/sok97/Go_Vchopper"
-    short_description: "A lightweight video cutter and muter."
-    url_template: "https://github.com/sok97/Go_Vchopper/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    repository:
-      owner: sok97
-      name: winget-pkgs
-      branch: master
-      pull_request:
-        enabled: true
-        draft: false
-        base: master

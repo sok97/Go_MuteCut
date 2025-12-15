@@ -13,7 +13,22 @@ A lightweight, high-performance video cutter and muter written in Go. It uses FF
 
 ## Installation
 
-### Option 1: Download Pre-built Binary (Recommended)
+### Option 1: Package Managers (Recommended)
+
+**macOS (Homebrew):**
+```bash
+brew tap sok97/tap
+brew install vchopper
+```
+> FFmpeg is installed automatically as a dependency.
+
+**Windows (Scoop):**
+```powershell
+scoop bucket add vchopper https://github.com/sok97/scoop-bucket
+scoop install vchopper
+```
+
+### Option 2: Download Pre-built Binary
 
 **Windows:**
 1.  Go to the [Releases page](https://github.com/sok97/Go_Vchopper/releases/latest).
@@ -22,12 +37,14 @@ A lightweight, high-performance video cutter and muter written in Go. It uses FF
 4.  Run `setup_ffmpeg.ps1` in PowerShell to download FFmpeg automatically.
 5.  Run `vchopper.exe` from the command line or double-click it.
 
-**Future: Winget (Coming Soon)**
-```powershell
-winget install sok97.vchopper
-```
+**macOS:**
+1.  Go to the [Releases page](https://github.com/sok97/Go_Vchopper/releases/latest).
+2.  Download `vchopper_X.X.X_darwin_amd64.tar.gz` (Intel) or `vchopper_X.X.X_darwin_arm64.tar.gz` (Apple Silicon).
+3.  Extract: `tar -xzf vchopper_*.tar.gz`
+4.  Install FFmpeg: `brew install ffmpeg`
+5.  Run: `./vchopper`
 
-### Option 2: Build from Source
+### Option 3: Build from Source
 
 **All Platforms:**
 1.  Clone the repository: `git clone https://github.com/sok97/Go_Vchopper.git`
